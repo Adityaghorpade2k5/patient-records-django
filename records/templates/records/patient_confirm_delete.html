@@ -1,0 +1,26 @@
+{% extends "records/base.html" %}
+
+{% block title %}Delete {{ patient.full_name }}?{% endblock %}
+
+{% block content %}
+<p class="crumb">
+  <a href="{% url 'patient_list' %}">Register</a> /
+  <a href="{{ patient.get_absolute_url }}">{{ patient.registration_no }}</a> / delete
+</p>
+
+<div class="sheet">
+  <h2>Delete this record?</h2>
+  <p class="subhead">
+    {{ patient.full_name }} ({{ patient.registration_no }}), admitted {{ patient.admitted_on|date:"d M Y" }}.
+    Deleting removes the record permanently.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="actions">
+      <button class="btn danger" type="submit">Delete record</button>
+      <a class="cancel" href="{{ patient.get_absolute_url }}">Keep it</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "records/base.html" %}
+
+{% block title %}{{ patient.full_name }}{% endblock %}
+
+{% block content %}
+<p class="crumb"><a href="{% url 'patient_list' %}">Register</a> / {{ patient.registration_no }}</p>
+
+<div class="sheet">
+  <h2>{{ patient.full_name }}</h2>
+  <p class="subhead">{{ patient.registration_no }} · {{ patient.get_status_display }}</p>
+
+  <dl>
+    <dt>Age</dt><dd>{{ patient.age }} years</dd>
+    <dt>Gender</dt><dd>{{ patient.get_gender_display }}</dd>
+    <dt>Blood group</dt><dd>{{ patient.blood_group|default:"Not recorded" }}</dd>
+    <dt>Phone</dt><dd>{{ patient.phone }}</dd>
+    <dt>Diagnosis</dt><dd>{{ patient.diagnosis }}</dd>
+    <dt>Consulting doctor</dt><dd>{{ patient.consulting_doctor }}</dd>
+    <dt>Admitted on</dt><dd>{{ patient.admitted_on|date:"d F Y" }}</dd>
+    <dt>Notes</dt><dd>{{ patient.notes|default:"—"|linebreaksbr }}</dd>
+    <dt>Record updated</dt><dd>{{ patient.updated_at|date:"d M Y, g:i a" }}</dd>
+  </dl>
+
+  <div class="actions" style="margin-top:22px">
+    <a class="btn" href="{% url 'patient_update' patient.pk %}">Edit record</a>
+    <a class="btn danger" href="{% url 'patient_delete' patient.pk %}">Delete record</a>
+  </div>
+</div>
+{% endblock %}

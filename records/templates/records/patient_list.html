@@ -1,0 +1,73 @@
+{% extends "records/base.html" %}
+
+{% block title %}Patient register{% endblock %}
+
+{% block content %}
+<div class="counts">
+  <div>
+    <span class="figure">{{ total }}</span>
+    <span class="label">patients on file</span>
+  </div>
+  <div>
+    <span class="figure">{{ admitted }}</span>
+    <span class="label">currently admitted</span>
+  </div>
+</div>
+
+<div class="toolbar">
+  <form method="get" action="{% url 'patient_list' %}">
+    <input type="search" name="q" value="{{ query }}" placeholder="Search name, reg. no, diagnosis or doctor" size="38">
+    <select name="status">
+      <option value="">Any status</option>
+      {% for value, label in status_choices %}
+        <option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn ghost" type="submit">Search</button>
+    {% if query or status %}<a class="btn ghost" href="{% url 'patient_list' %}">Clear</a>{% endif %}
+  </form>
+</div>
+
+{% if patients %}
+<table class="register">
+  <thead>
+    <tr>
+      <th>Reg. no</th>
+      <th>Patient</th>
+      <th class="hide-sm">Diagnosis</th>
+      <th class="hide-sm">Consulting doctor</th>
+      <th>Admitted</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for patient in patients %}
+    <tr>
+      <td class="reg spine spine-{{ patient.status }}">{{ patient.registration_no }}</td>
+      <td class="name">
+        <a href="{{ patient.get_absolute_url }}">{{ patient.full_name }}</a>
+        <div class="status-word">{{ patient.age }} yrs · {{ patient.get_gender_display }} · {{ patient.get_status_display }}</div>
+      </td>
+      <td class="dx hide-sm">{{ patient.diagnosis }}</td>
+      <td class="dx hide-sm">{{ patient.consulting_doctor }}</td>
+      <td class="reg">{{ patient.admitted_on|date:"d M Y" }}</td>
+      <td class="acts">
+        <a href="{% url 'patient_update' patient.pk %}">Edit</a>
+        <a class="remove" href="{% url 'patient_delete' patient.pk %}">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">
+  {% if query or status %}
+    <p>No patient matches that search.</p>
+    <a class="btn ghost" href="{% url 'patient_list' %}">Show all patients</a>
+  {% else %}
+    <p>The register is empty. Add the first patient to get started.</p>
+    <a class="btn" href="{% url 'patient_create' %}">Register a patient</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

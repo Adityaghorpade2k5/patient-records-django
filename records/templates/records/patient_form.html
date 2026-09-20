@@ -1,0 +1,39 @@
+{% extends "records/base.html" %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+<p class="crumb">
+  <a href="{% url 'patient_list' %}">Register</a> /
+  {% if patient %}<a href="{{ patient.get_absolute_url }}">{{ patient.registration_no }}</a> / edit{% else %}new patient{% endif %}
+</p>
+
+<div class="sheet">
+  <h2>{{ heading }}</h2>
+  <p class="subhead">Fields marked with an asterisk are required.</p>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="field"><p class="error">{{ form.non_field_errors }}</p></div>
+    {% endif %}
+
+    <div class="form-grid">
+      {% for field in form %}
+        <div class="field {% if field.name == 'diagnosis' or field.name == 'notes' %}wide{% endif %} {% if field.errors %}has-error{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+          {{ field }}
+          {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+          {% for error in field.errors %}<p class="error">{{ error }}</p>{% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="submit">{{ submit_label }}</button>
+      <a class="cancel" href="{% if patient %}{{ patient.get_absolute_url }}{% else %}{% url 'patient_list' %}{% endif %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
